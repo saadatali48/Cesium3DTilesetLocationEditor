@@ -32,7 +32,10 @@ window.Cesium3dTilesetLocationEditor = (function () {
 
         this._createAxesEntities();
         this._initEventHandlers();
-        this._update(this._tileset.modelMatrix);
+
+        var transform = Cesium.Transforms.eastNorthUpToFixedFrame(tileset.boundingSphere.center);
+
+        this._update(transform);
 
         this._visible = true;
     }
@@ -121,7 +124,9 @@ window.Cesium3dTilesetLocationEditor = (function () {
 
         this._leftDownCartesian = this._cesiumViewer.scene.pickPosition(movement.position);
 
-        this._tilesetModelMatrixWhenLeftDown = this._tileset.modelMatrix.clone();
+        var transform = Cesium.Transforms.eastNorthUpToFixedFrame(tileset.boundingSphere.center);
+
+        this._tilesetModelMatrixWhenLeftDown = transform.clone();
     };
 
     _.prototype._onScreeSpaceLeftUp = function(movement) {
@@ -171,21 +176,18 @@ window.Cesium3dTilesetLocationEditor = (function () {
         matrix[13] += delta.y;
         matrix[14] += delta.z;
 
-        this._tileset.modelMatrix = matrix;
+        //this._tileset.modelMatrix = matrix;
+
+        //ugi
+        var matrix1 = Cesium.Matrix4.IDENTITY.clone();
+
+        matrix1[12] += delta.x;
+        matrix1[13] += delta.y;
+        matrix1[14] += delta.z;
+
+        this._tileset.modelMatrix = matrix1;
 
         this._update(matrix);
-        this._displayLatLonAltitude();
-    };
-
-    _.prototype._displayLatLonAltitude = function() {
-        var carto = Cesium.Cartographic.fromCartesian(this._origin);
-
-        var lon = Cesium.Math.toDegrees(carto.longitude);
-        var lat = Cesium.Math.toDegrees(carto.latitude);
-
-        $('#tileset_longitude').val(lon);
-        $('#tileset_latitude').val(lat);
-        $('#tileset_altitude').val(carto.height);
     };
 
     _.prototype._deltaAlongXAxisOfLocal = function (currentCartesian) {

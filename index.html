@@ -34,7 +34,7 @@
     });
 
     const viewer = new Cesium.Viewer('cesiumContainer', {
-        //terrainProvider: worldTerrain,
+        terrainProvider: worldTerrain,
     });
 
     var tileset = new Cesium.Cesium3DTileset({
@@ -42,17 +42,17 @@
     });
 
     viewer.scene.primitives.add(tileset);
-    viewer.zoomTo(tileset);
 
-    Sandcastle.addToolbarButton("Start", () => {
-        var tilesetLocationEditor = new Cesium3dTilesetLocationEditor(viewer, tileset);
+    tileset.readyPromise
+        .then(function (tileset) {
+            viewer.zoomTo(tileset);
 
-        tilesetLocationEditor.setVisible(true);
-    });
+            var tilesetLocationEditor = new Cesium3dTilesetLocationEditor(viewer, tileset);
+        })
+        .otherwise(function (error) {
+            console.log(error);
+        });
 
-    Sandcastle.addToolbarButton("Stop", () => {
-        tilesetLocationEditor.setVisible(false);
-    });
 </script>
 </body>
 </html>
