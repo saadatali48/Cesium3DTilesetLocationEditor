@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>3D Tile Location Editor</title>
+    <link rel="stylesheet" href="https://cesiumjs.org/releases/1.70.1/Build/Cesium/Widgets/widgets.css">
+    <link rel="stylesheet" href="https://cesiumjs.org/Cesium/Build/Apps/Sandcastle/templates/bucket.css">
+
+    <script src="https://cesiumjs.org/releases/1.70.1/Build/Cesium/Cesium.js"></script>
+
+    <!--    <script src = "./Cesium-1.70.1/Build/CesiumUnminified/Cesium.js"></script>-->
+
+    <script src = "https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="cesiumContainer" class="fullSize"></div>
+<div id="toolbar">
+</div>
+
+<script src = "./Cesium3DTileLocationEditor.js"></script>
+<script>
+    const worldTerrain = Cesium.createWorldTerrain({
+        requestWaterMask: true,
+        requestVertexNormals: true,
+    });
+
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+        //terrainProvider: worldTerrain,
+    });
+
+    var tileset = new Cesium.Cesium3DTileset({
+        url: Cesium.IonResource.fromAssetId(40866),
+    });
+
+    viewer.scene.primitives.add(tileset);
+    viewer.zoomTo(tileset);
+
+    Sandcastle.addToolbarButton("Start", () => {
+        var tilesetLocationEditor = new Cesium3dTilesetLocationEditor(viewer, tileset);
+
+        tilesetLocationEditor.setVisible(true);
+    });
+
+    Sandcastle.addToolbarButton("Stop", () => {
+        tilesetLocationEditor.setVisible(false);
+    });
+</script>
+</body>
+</html>
